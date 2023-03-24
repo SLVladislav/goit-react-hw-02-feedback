@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Statictics } from './Statictics/Statistics';
+import { Section } from './Section/Section';
 
 export class App extends Component {
   state = {
@@ -8,8 +10,9 @@ export class App extends Component {
   };
 
   onLeaveFeedback = option =>
-    this.setState(previouseState => ({ [option]: previouseState[option] + 1 }));
- 
+    this.setState(prevState => {
+      return { [option]: prevState[option] + 1 };
+    });
 
   countTotalFeedback = () => {
     const { good, neutral, bad } = this.state;
@@ -31,20 +34,29 @@ export class App extends Component {
   render() {
     return (
       <div>
-        <h2>Please leave feedback</h2>
-        <div>
-          <button type="submit">Good</button>
-          <button type="submit">Neutral</button>
-          <button type="submit">Bad</button>
-        </div>
-        <div>
-          <h2>Statistics</h2>
-          <ul>
-            <li >{this.state.good}</li>
-            <li>{this.state.neutral}</li>
-            <li>{this.state.bad}</li>
-          </ul>
-        </div>
+        <Section title="Please leave feedback">
+          {Object.keys(this.state).map(option => {
+            return (
+              <button
+                onClick={() => this.onLeaveFeedback(option)}
+                key={option}
+                type="button"
+              >
+                {option}
+              </button>
+            );
+          })}
+        </Section>
+
+        <Section title="Statistics">
+          <Statictics
+            good={this.good}
+            neutral={this.neutral}
+            bad={this.bad}
+            total={this.countTotalFeedback()}
+            positivePercentage={this.countPositiveFeedbackPercentage()}
+          ></Statictics>
+        </Section>
       </div>
     );
   }
